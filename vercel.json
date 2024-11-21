@@ -1,9 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
-  "outputDirectory": "website/build/client",
-  "installCommand": "pnpm install",
-  "buildCommand": "cd website && pnpm build",
   "ignoreCommand": "[ \"$VERCEL_ENV\" != production ]",
   "cleanUrls": true,
   "github": {
