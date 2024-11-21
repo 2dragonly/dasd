@@ -36,6 +36,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/source-map-support": "^0.5.10",
+    "@vercel/nft": "0.27.6",
     "autoprefixer": "^10.4.20",
     "cross-env": "^7.0.3",
     "esbuild": "^0.24.0",

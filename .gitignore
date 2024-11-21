@@ -7,3 +7,4 @@
 **/tsconfig.tsbuildinfo
 **/.tw-patch
 **/vite.config.*.timestamp-*
+**/.vercel
