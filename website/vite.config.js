@@ -16,7 +16,7 @@ expand(config({ path: resolve(cwd(), "../.env") }));
 
 const port = parseInt(env?.PORT || "3000");
 
-export default defineConfig({
+export default defineConfig(({ isSsrBuild, command }) => ({
   plugins: [
     devServer({
       injectClientScript: false,
@@ -27,6 +27,9 @@ export default defineConfig({
     tsconfigPaths(),
     ...(env?.NODE_ENV !== "development" ? [utwm()] : []),
   ],
+  ssr: {
+    noExternal: command === "build" ? true : undefined,
+  },
   css: {
     preprocessorOptions: {
       scss: {
@@ -35,13 +38,26 @@ export default defineConfig({
     },
   },
   build: {
+    target: "ES2022",
     emptyOutDir: true,
     minify: true,
     assetsInlineLimit: 0,
     chunkSizeWarningLimit: 1024,
     copyPublicDir: false,
     rollupOptions: {
-      output: { minifyInternalExports: true },
+      external: [/node:.*/, "stream", "crypto", "fsevents"],
+      output: {
+        minifyInternalExports: true,
+        manualChunks(id) {
+          if (id.includes("node_modules")) {
+            const parts = id.split("node_modules/")[1].split("/");
+            return parts[0] === ".pnpm" ? parts[1].split("@")[0] : parts[0];
+          }
+        },
+      },
+      ...(isSsrBuild && {
+        input: "src/server/index.ts",
+      }),
     },
   },
   esbuild: {
@@ -50,8 +66,14 @@ export default defineConfig({
     minify: true,
     mangleCache: {},
   },
+  optimizeDeps: {
+    esbuildOptions: {
+      minify: true,
+      treeShaking: true,
+    },
+  },
   server: {
     port,
     open: false,
   },
-});
+}));
